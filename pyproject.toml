@@ -12,6 +12,7 @@ numpy = "^2.0.1"
 pydantic = {extras = ["email"], version = "^2.8.2"}
 jupyter = "^1.0.0"
 tqdm = "^4.67.0"
+pyyaml = "^6.0.2"
 
 
 [tool.poetry.group.dev.dependencies]

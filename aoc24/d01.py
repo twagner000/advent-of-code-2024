@@ -1,15 +1,25 @@
-def p01a(puzzle_input: str) -> int:
+from io import StringIO
+from pathlib import Path
+
+import pandas as pd
+
+
+def p01a(filepath: Path | StringIO) -> int:
     """Independently sort 2 columns of integers and sum the differences."""
-    puzzle_input = [[int(x) for x in line.split()] for line in puzzle_input.split("\n")]
-    total_diff = 0
-    for a, b in zip(*[sorted(x) for x in zip(*puzzle_input, strict=False)], strict=False):
-        total_diff += abs(a - b)
-    return total_diff
+    puzzle_input = pd.read_csv(filepath, sep=r"\s+", names=["left", "right"], dtype=int)
+    return (
+        puzzle_input.assign(
+            left=lambda df: df["left"].sort_values(ignore_index=True),
+            right=lambda df: df["right"].sort_values(ignore_index=True),
+            diff=lambda df: df["left"] - df["right"],
+        )["diff"]
+        .abs()
+        .sum()
+    )
 
 
-def p01b(puzzle_input: str) -> int:
+def p01b(filepath: Path | StringIO) -> int:
     """Multiply each integer in the left column by the number of times it appears in the right column, then sum."""
-    puzzle_input = [[int(x) for x in line.split()] for line in puzzle_input.split("\n")]
-    left, right = zip(*puzzle_input, strict=False)
-    counts = {x: right.count(x) for x in set(left)}
-    return sum(x * counts[x] for x in left)
+    puzzle_input = pd.read_csv(filepath, sep=r"\s+", names=["left", "right"], dtype=int)
+    counts = puzzle_input["right"].value_counts().to_dict()
+    return puzzle_input.assign(product=lambda df: df["left"].apply(lambda x: x * counts.get(x, 0)))["product"].sum()
