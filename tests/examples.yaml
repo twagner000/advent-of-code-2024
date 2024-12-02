@@ -1,5 +1,5 @@
 p01a:
-  full_problem: data/d01.txt
+  completed: True
   solution: 11
   input: |
     3   4
@@ -10,7 +10,7 @@ p01a:
     3   3
 
 p01b:
-  full_problem: data/d01.txt
+  completed: True
   solution: 31
   input: |
     3   4
