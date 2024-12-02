@@ -1,10 +1,6 @@
 p01:
-  a:
-    completed: True
-    solution: 11
-  b:
-    completed: True
-    solution: 31
+  a: 11
+  b: 31
   input: |
     3   4
     4   3
@@ -14,12 +10,8 @@ p01:
     3   3
 
 p02:
-  a:
-    completed: True
-    solution: 2
-  b:
-    completed: True
-    solution: 4
+  a: 2
+  b: 4
   input: |
     7 6 4 2 1
     1 2 7 8 9
@@ -29,11 +21,8 @@ p02:
     1 3 6 7 9
 
 p03:
-  a:
-    completed: False
-    solution: -1
-  b:
-    completed: False
-    solution: -1
+  print_full_solutions: True
+  a: -1
+  b: -1
   input: |
     TBD
