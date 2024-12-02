@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 
 
-def check_report(report: list[int]) -> bool:
+def check_report(report: str | list) -> bool:
     """Return True if the report is safe.
 
     A report is safe if both of the following are true:
@@ -12,6 +12,8 @@ def check_report(report: list[int]) -> bool:
     1. All levels are increasing or decreasing.
     2. All differences between adjacent levels are between 1 and 3.
     """
+    if isinstance(report, str):
+        report = report.split()
     diffs = pd.Series(report, dtype=int).diff().dropna()
     return ((diffs > 0).all() or (diffs < 0).all()) and (diffs.abs() >= 1).all() and (diffs.abs() <= 3).all()
 
@@ -28,7 +30,7 @@ def check_report_with_problem_dampener(report: str) -> bool:
 def p02a(filepath: Path | StringIO) -> int:
     """Return number of safe reports (rows)."""
     puzzle_input = pd.read_csv(filepath, names=["levels"])
-    return puzzle_input["levels"].apply(lambda x: x.split()).apply(check_report).sum()
+    return puzzle_input["levels"].apply(check_report).sum()
 
 
 def p02b(filepath: Path | StringIO) -> int:
