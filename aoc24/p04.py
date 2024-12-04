@@ -23,16 +23,12 @@ def p04a(filepath: Path | StringIO) -> int:
     puzzle_input = parse_input(filepath)
     count = 0
     targets = ("XMAS", "SAMX")
-    for shape in [(1, 4), (4, 1), (4, 4)]:
-        for windows in np.lib.stride_tricks.sliding_window_view(puzzle_input, shape):
-            for window in windows:
-                if shape == (4, 4):
-                    # search diagonals
-                    for diag in diagonals_to_strings(window):
-                        if diag in targets:
-                            count += 1
-                elif "".join(window.flatten()) in targets:
-                    count += 1
+    for shape in [(1, 4), (4, 1), (4, 4)]:  # horizontal, vertical, andor diagonal
+        for window in np.lib.stride_tricks.sliding_window_view(puzzle_input, shape).reshape((-1, *shape)):
+            if shape == (4, 4):
+                count += sum(diag in targets for diag in diagonals_to_strings(window))
+            elif "".join(window.flatten()) in targets:
+                count += 1
     return count
 
 
@@ -49,8 +45,7 @@ def p04b(filepath: Path | StringIO) -> int:
     """
     puzzle_input = parse_input(filepath)
     count = 0
-    for windows in np.lib.stride_tricks.sliding_window_view(puzzle_input, (3, 3)):
-        for window in windows:
-            if all(diag in ("MAS", "SAM") for diag in diagonals_to_strings(window)):
-                count += 1
+    for window in np.lib.stride_tricks.sliding_window_view(puzzle_input, (3, 3)).reshape((-1, 3, 3)):
+        if all(diag in ("MAS", "SAM") for diag in diagonals_to_strings(window)):
+            count += 1
     return count
