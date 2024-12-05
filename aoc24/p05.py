@@ -1,18 +1,16 @@
 from collections import defaultdict
-from io import StringIO
-from pathlib import Path
+from io import TextIOBase
 
 
-def parse_input(filepath: Path | StringIO) -> tuple[dict[int, list[int]], dict[int, list[int]], list[list[int]]]:
-    """Parse text file into page ordering rules and pages to produce in each update.
+def parse_input(input_stream: TextIOBase) -> tuple[dict[int, list[int]], dict[int, list[int]], list[list[int]]]:
+    """Parse input text into (a) page ordering rules and (b) pages to produce in each update.
 
     Page ordering rules are two dictionaries. The first lists all pages that must come before the key.
     The second lists all pages that must come after the key (inverse of first).
 
     Each update (in the list of updates) is an ordered list of page numbers.
     """
-    puzzle_input = filepath.read_text() if isinstance(filepath, Path) else filepath.read()
-    rules, updates = puzzle_input.strip().split("\n\n")
+    rules, updates = input_stream.read().strip().split("\n\n")
     k_before_v = defaultdict(list)
     k_after_v = defaultdict(list)
     for line in rules.split("\n"):
@@ -35,9 +33,9 @@ def is_ordered_correctly(update: list[int], k_before_v: dict[int, list[int]], k_
     return True
 
 
-def p05a(filepath: Path | StringIO) -> int:
+def p05a(input_stream: TextIOBase) -> int:
     """Sum the middle page of all correctly ordered updates."""
-    k_before_v, k_after_v, updates = parse_input(filepath)
+    k_before_v, k_after_v, updates = parse_input(input_stream)
     total = 0
     for update in updates:
         if is_ordered_correctly(update, k_before_v, k_after_v):
@@ -45,9 +43,9 @@ def p05a(filepath: Path | StringIO) -> int:
     return total
 
 
-def p05b(filepath: Path | StringIO) -> int:
+def p05b(input_stream: TextIOBase) -> int:
     """Reorder the incorrectly ordered updates and sum the middle page from each."""
-    k_before_v, k_after_v, updates = parse_input(filepath)
+    k_before_v, k_after_v, updates = parse_input(input_stream)
     total = 0
     for update in updates:
         if not is_ordered_correctly(update, k_before_v, k_after_v):

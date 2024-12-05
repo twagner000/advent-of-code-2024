@@ -1,5 +1,4 @@
-from io import StringIO
-from pathlib import Path
+from io import TextIOBase
 
 import pandas as pd
 
@@ -27,13 +26,13 @@ def check_report_with_problem_dampener(report: str) -> bool:
     return False
 
 
-def p02a(filepath: Path | StringIO) -> int:
+def p02a(input_stream: TextIOBase) -> int:
     """Return number of safe reports (rows)."""
-    puzzle_input = pd.read_csv(filepath, names=["levels"])
+    puzzle_input = pd.read_csv(input_stream, names=["levels"])
     return puzzle_input["levels"].apply(check_report).sum()
 
 
-def p02b(filepath: Path | StringIO) -> int:
+def p02b(input_stream: TextIOBase) -> int:
     """Return number of safe reports (rows), with the Problem Dampener enabled."""
-    puzzle_input = pd.read_csv(filepath, names=["levels"])
+    puzzle_input = pd.read_csv(input_stream, names=["levels"])
     return puzzle_input["levels"].apply(check_report_with_problem_dampener).sum()
