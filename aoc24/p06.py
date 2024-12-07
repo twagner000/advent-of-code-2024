@@ -1,15 +1,24 @@
 from io import TextIOBase
 
 import numpy as np
-from tqdm import tqdm
 
 DIRECTION_SYMBOLS = "^>v<"
 DIRECTION_MOVES = [
-    np.array([-1, 0, 0]),
-    np.array([0, 1, 0]),
-    np.array([1, 0, 0]),
-    np.array([0, -1, 0]),
+    (-1, 0),
+    (0, 1),
+    (1, 0),
+    (0, -1),
 ]
+
+
+def parse_puzzle_input(input_stream: TextIOBase) -> tuple[int, np.ndarray, tuple[int, int, int]]:
+    """Parse text input to find grid size, binary array of obstacle locations, and starting position/direction."""
+    puzzle_input = np.array([list(line.strip()) for line in input_stream])
+    grid_size = puzzle_input.shape[0]
+    assert grid_size == puzzle_input.shape[1]
+    start_pos = [x.item() for x in np.where(np.isin(puzzle_input, list(DIRECTION_SYMBOLS)))]
+    start_dir = DIRECTION_SYMBOLS.index(puzzle_input[*start_pos])
+    return grid_size, (puzzle_input == "#").astype(int), (*start_pos, start_dir)
 
 
 def visualize(obstacles: np.ndarray, visited: np.ndarray) -> str:
@@ -20,49 +29,41 @@ def visualize(obstacles: np.ndarray, visited: np.ndarray) -> str:
     return "\n".join("".join(row) for row in viz)
 
 
-def find_start(puzzle_input: np.ndarray) -> tuple[int, int, int]:
-    """Parse the puzzle input to find the starting position and direction of agent."""
-    position = [x.item() for x in np.where(np.isin(puzzle_input, list(DIRECTION_SYMBOLS)))]
-    direction = DIRECTION_SYMBOLS.index(puzzle_input[*position])
-    return (*position, direction)
+def try_move(row: int, col: int, direction: int) -> tuple[int, int, int]:
+    """Use `direction` to return a tuple with row and column incremented (and direction unchanged)."""
+    d_row, d_col = DIRECTION_MOVES[direction]
+    return row + d_row, col + d_col, direction
 
 
-def get_next_space(current_space: tuple[int, int, int]) -> np.ndarray:
-    """Generate the next tuple (row, column direction) from `current_space`, assuming no obstacles are encountered."""
-    return np.array(current_space) + DIRECTION_MOVES[current_space[2]]
-
-
-def find_route(grid_size: int, obstacles: np.ndarray, visited: list[tuple]) -> tuple[bool, list[tuple[int, int, int]]]:
+def find_route(grid_size: int, obstacles: np.ndarray, previous: tuple) -> tuple[bool, list[tuple[int, int, int]]]:
     """Travel the route of an agent that turns right every time it hits an obstacle.
 
-    Return a bool indicating whether the agent got stuck in a loop, and a list of tuples covered by the agent.
+    Return a bool indicating whether the agent got stuck in a loop, and a set of tuples covered by the agent.
     Each tuple consists of (row, column, direction).
     """
-    visited = visited[::1]  # copy to avoid mutation issues
+    visited = {previous}  # using a set (instead of list) enables quicker checks for loops
     while True:
-        next_visit = get_next_space(visited[-1])
-        if next_visit[:2].min() < 0 or next_visit[:2].max() >= grid_size:
-            break  # exit grid
-        if tuple(next_visit.tolist()) in visited:
-            # have been in this position/orientation before, entering a loop
+        row, col, direction = try_move(*previous)
+        if row < 0 or col < 0 or row >= grid_size or col >= grid_size:
+            break  # exiting grid
+        if (row, col, direction) in visited:
+            # have been in this position/direction before, entering a loop
             return True, visited
-        if obstacles[*next_visit[:2]]:
+        if obstacles[row, col]:
             # obstacle reached, stay in place and change direction
-            next_visit = np.array(visited[-1])
-            next_visit[2] += 1
-            next_visit[2] %= 4
-        visited.append(tuple(next_visit.tolist()))
+            row, col, direction = previous
+            direction += 1
+            direction %= 4
+        previous = (row, col, direction)
+        visited.add(previous)
     return False, visited
 
 
 def p06a(input_stream: TextIOBase) -> int:
     """Find number of spaces covered before exiting a grid, if an agent turns right every time it hits an obstacle."""
-    puzzle_input = np.array([list(line.strip()) for line in input_stream])
-    grid_size = puzzle_input.shape[0]
-    assert grid_size == puzzle_input.shape[1]
-    obstacles = (puzzle_input == "#").astype(int)
-    _, visited = find_route(grid_size, obstacles, [find_start(puzzle_input)])
-    visited = np.stack(visited)  # 2d array for ease of manipulation, now that length is known
+    grid_size, obstacles, start = parse_puzzle_input(input_stream)
+    _, visited = find_route(grid_size, obstacles, start)
+    visited = np.stack(list(visited))  # 2d array for ease of manipulation, now that length is known
     print(visualize(obstacles, visited))
     return np.unique(visited[:, :2], axis=0).shape[0]
 
@@ -71,23 +72,19 @@ def p06b(input_stream: TextIOBase) -> int:
     """Find how many times adding a single new obstacle to a grid traps an agent in a loop.
 
     The agent turns right every time it hits an obstacle.
-
-    TODO: inefficient naive implementation - can be improved.
     """
-    puzzle_input = np.array([list(line.strip()) for line in input_stream])
-    grid_size = puzzle_input.shape[0]
-    assert grid_size == puzzle_input.shape[1]
-    obstacles = (puzzle_input == "#").astype(int)
-    start = find_start(puzzle_input)
-    _, visited = find_route(grid_size, obstacles, [start])
+    grid_size, obstacles, start = parse_puzzle_input(input_stream)
+    _, visited = find_route(grid_size, obstacles, start)
 
     loop_obstacles = set()
-    for candidate_turn in tqdm(visited[:-1]):
-        new_obstacle = get_next_space(candidate_turn)[:2]
-        if new_obstacle.min() >= 0 and new_obstacle.max() < grid_size and not obstacles[*new_obstacle]:
+    for pre_obstacle_space in visited:
+        obs_row, obs_col, _ = try_move(*pre_obstacle_space)
+        if obs_row < 0 or obs_col < 0 or obs_row >= grid_size or obs_col >= grid_size:
+            continue  # can't add an obstacle outside of the grid
+        if not obstacles[obs_row, obs_col]:
             new_obstacles = obstacles.copy()
-            new_obstacles[*new_obstacle] = 1
-            entered_loop, _ = find_route(grid_size, new_obstacles, [start])
+            new_obstacles[obs_row, obs_col] = 1
+            entered_loop, _ = find_route(grid_size, new_obstacles, start)
             if entered_loop:
-                loop_obstacles.add(tuple(new_obstacle.tolist()))
+                loop_obstacles.add((obs_row, obs_col))
     return len(loop_obstacles)
