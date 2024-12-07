@@ -21,7 +21,7 @@ def sum_solvable_equations(input_stream: TextIOBase, valid_operators: list[Calla
     for target, terms in parse_input(input_stream):
         for operators in product(valid_operators, repeat=len(terms) - 1):
             total = terms[0]
-            for op, term in zip(operators, terms[1:], strict=False):
+            for op, term in zip(operators, terms[1:], strict=True):
                 total = op(total, term)
             if total == target:
                 result += target
