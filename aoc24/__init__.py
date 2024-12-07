@@ -7,3 +7,4 @@ from .p04 import p04a, p04b
 from .p05 import p05a, p05b
 from .p06 import p06a, p06b
 from .p07 import p07a, p07b
+from .p08 import p08a, p08b
