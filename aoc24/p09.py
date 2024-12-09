@@ -11,8 +11,8 @@ def p09a(input_stream: TextIOBase) -> int:
     # expand the input into a list of blocks with IDs (use None for empty blocks)
     blocks = [i // 2 if i % 2 == 0 else None for i, x in enumerate(input_stream.read().strip()) for j in range(int(x))]
 
-    src_i = len(blocks) - 1  # index starts from the right, search for file blocks to copy
-    dest_i = 0  # index starts from left, search for empty blocks to copy file blocks into
+    src_i = len(blocks) - 1  # "source" index from right (search for file blocks to copy)
+    dest_i = 0  # "destination" index from left (search for empty blocks to copy file blocks into)
     while src_i > dest_i:  # stop when we have no more empty blocks to the left of file blocks
         if blocks[src_i] is None:
             src_i -= 1  # keep searching for a non-empty block to copy
