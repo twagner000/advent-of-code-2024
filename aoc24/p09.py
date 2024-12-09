@@ -2,21 +2,28 @@ from io import TextIOBase
 
 
 def p09a(input_stream: TextIOBase) -> int:
-    """TBD."""
-    disk_map = input_stream.read().strip()
-    files = [int(x) for x in disk_map[::2]]
-    free_space = [int(x) for x in disk_map[1::2]] + [1]
-    blocks = []
-    for i, (file, free) in enumerate(zip(files, free_space, strict=False)):
-        blocks += file * [i] + free * [None]
-    for i in range(-1, -len(blocks) + 1, -1):
-        first_dot = blocks.index(None)
-        if len(set(blocks[first_dot:])) == 1:
-            break
-        if (cur_digit := blocks[i]) is None:
-            continue
-        blocks[first_dot] = cur_digit
-        blocks[i] = None
+    """Move file blocks one at a time from the right to the leftmost free space and return a checksum.
+
+    Each digit in `input_stream` alternates between the size of a file or free space, in blocks.
+
+    Files are assigned sequential integer IDs. The checksum sums the products of each block's position and file ID.
+    """
+    # expand the input into a list of blocks with IDs (use None for empty blocks)
+    blocks = [i // 2 if i % 2 == 0 else None for i, x in enumerate(input_stream.read().strip()) for j in range(int(x))]
+
+    src_i = len(blocks) - 1  # index starts from the right, search for file blocks to copy
+    dest_i = 0  # index starts from left, search for empty blocks to copy file blocks into
+    while src_i > dest_i:  # stop when we have no more empty blocks to the left of file blocks
+        if blocks[src_i] is None:
+            src_i -= 1  # keep searching for a non-empty block to copy
+        elif blocks[dest_i] is not None:
+            dest_i += 1  # keep searching for the next available empty block to copy into
+        else:
+            # swap the rightmost file block into the leftmost empty block
+            blocks[dest_i], blocks[src_i] = blocks[src_i], blocks[dest_i]
+            src_i -= 1
+            dest_i += 1
+
     return sum(i * v for i, v in enumerate(blocks) if v is not None)
 
 

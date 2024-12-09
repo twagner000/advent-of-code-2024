@@ -121,6 +121,7 @@ p08:
     ............
 
 p09:
+  print_full_solutions: True
   a: 1928
   b: 2858
   input: |
