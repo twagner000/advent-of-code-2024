@@ -27,35 +27,26 @@ def p09a(input_stream: TextIOBase) -> int:
     return sum(i * v for i, v in enumerate(blocks) if v is not None)
 
 
-def p09b(input_stream: TextIOBase) -> int:  # noqa: C901
+def p09b(input_stream: TextIOBase) -> int:
     """TBD."""
     disk_map = input_stream.read().strip()
     blocks = [(i // 2 if i % 2 == 0 else None, int(x)) for i, x in enumerate(disk_map)]
-    for src_id in range(blocks[-1][0], 0, -1):
-        for src_idx, src in enumerate(blocks):  # noqa: B007
-            if src[0] == src_id:
-                src_size = src[1]
+    for file in blocks[-1::-2]:
+        src_i = blocks.index(file)  # index of file we're trying to move
+        dest_i = 0  # index of file/space we're trying to move the file into
+        while (dest := blocks[dest_i]) != file:  # stop once we've hit our file
+            if dest[0] is None and dest[1] >= file[1]:
+                blocks[src_i] = (None, file[1])  # replace the original file location with empty space
+                blocks[dest_i] = file
+                if (remainder := dest[1] - file[1]) > 0:
+                    # if our file was smaller than the empty space, we need to keep the remainder
+                    if blocks[dest_i + 1][0] is None:
+                        blocks[dest_i + 1] = (None, blocks[dest_i + 1][1] + remainder)  # merge into following space
+                    else:
+                        blocks.insert(dest_i + 1, (None, remainder))  # add new block with remainder
                 break
-        for dest_idx, (dest_id, dest_size) in enumerate(blocks[:src_idx]):
-            if dest_id is not None:
-                continue
-            if dest_size == src_size:
-                # swap
-                blocks[src_idx], blocks[dest_idx] = blocks[dest_idx], blocks[src_idx]
-                break
-            if dest_size > src_size:
-                # dest becomes src + a new empty block (remainder)
-                blocks[dest_idx] = (src_id, src_size)
-                blocks[src_idx] = (None, src_size)
-                blocks.insert(dest_idx + 1, (None, dest_size - src_size))
-                break
-        # consolidate empty blocks
-        i = 1
-        while i < len(blocks):
-            if blocks[i - 1][0] == blocks[i][0] and blocks[i][0] is None:
-                blocks[i - 1] = (None, blocks[i - 1][1] + blocks[i][1])
-                blocks.pop(i)
-            i += 1
+            dest_i += 1
+
     i = 0
     total = 0
     for x, n in blocks:
