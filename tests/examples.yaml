@@ -121,6 +121,7 @@ p08:
     ............
 
 p09:
+  # print_full_solutions: True
   a: 1928
   b: 2858
   input: |
@@ -140,6 +141,14 @@ p10:
     10456732
 
 p11:
+  a: 55312
+  b: -1  # no test case provided for part b
+  input: |
+    125 17
+
+
+
+p12:
   print_full_solutions: True
   a: -1
   b: -1
