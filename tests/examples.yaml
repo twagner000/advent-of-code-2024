@@ -146,9 +146,25 @@ p11:
   input: |
     125 17
 
-
-
 p12:
+  print_full_solutions: True
+  a: 1930
+  b: 1206
+  input: |
+    RRRRIICCFF
+    RRRRIICCCF
+    VVRRRCCFFF
+    VVRCCCJFFF
+    VVVVCJJCFE
+    VVIVCCJJEE
+    VVIIICJJEE
+    MIIIIIJJEE
+    MIIISIJEEE
+    MMMISSJEEE
+
+
+
+p13:
   print_full_solutions: True
   a: -1
   b: -1
