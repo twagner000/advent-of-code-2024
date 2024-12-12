@@ -50,32 +50,21 @@ def get_area_n_sides_cost(region_info: dict) -> int:
     """Calculate the cost to fence a region (area * number of sides) using `region_info`."""
     external_edges = region_info["all_edges"] - region_info["internal_edges"]
     n_sides = 0
-    while True:
-        (x1, y1), (x2, y2) = external_edges.pop()
+    while external_edges:
+        edge = external_edges.pop()
         n_sides += 1
 
-        if y1 == y2:  # is vertical
-            for direction in (-1, 1):
-                ny = y1 + direction
-                try:
-                    while True:
-                        external_edges.remove(((x1, ny), (x2, ny)))
-                        ny += direction
-                except KeyError:
-                    pass
-
-        else:  # is horizontal
-            for direction in (-1, 1):
-                nx = x1 + direction
-                try:
-                    while True:
-                        external_edges.remove(((nx, y1), (nx, y2)))
-                        nx += direction
-                except KeyError:
-                    pass
-
-        if not external_edges:
-            break
+        # remove all other external edges that are part of the same side, so that we only count the side once
+        traverse_dim = 1 * (edge[0][1] == edge[1][1])
+        for traverse_dir in (-1, 1):
+            nv = edge[0][traverse_dim] + traverse_dir
+            try:
+                while True:  # rely on KeyError to terminate loop
+                    next_edge = tuple(tuple(nv if i == traverse_dim else v for i, v in enumerate(pt)) for pt in edge)
+                    external_edges.remove(next_edge)
+                    nv += traverse_dir
+            except KeyError:
+                pass
 
     return len(region_info["plots"]) * n_sides
 
@@ -87,14 +76,12 @@ def p12(input_stream: TextIOBase, *, n_sides_cost: bool) -> int:
     assert grid_size == grid.shape[1]
     regions = np.zeros_like(grid, dtype=int)
     total_cost = 0
-    while True:
+    while regions.min() == 0:
         i = int(regions.argmin())
         x, y = i % grid_size, i // grid_size
         region_info = explore_region(x, y, grid_size, grid, regions)
         regions = region_info["regions"]
         total_cost += (get_area_n_sides_cost if n_sides_cost else get_area_perimeter_cost)(region_info)
-        if regions.min() > 0:
-            break
     return total_cost
 
 
