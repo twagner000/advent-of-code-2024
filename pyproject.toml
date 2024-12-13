@@ -13,6 +13,7 @@ pydantic = {extras = ["email"], version = "^2.8.2"}
 jupyter = "^1.0.0"
 tqdm = "^4.67.0"
 pyyaml = "^6.0.2"
+ortools = "^9.11.4210"
 
 
 [tool.poetry.group.dev.dependencies]
