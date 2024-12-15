@@ -199,7 +199,6 @@ p14:
     p=9,5 v=-3,-3
 
 p15:
-  print_full_solutions: True
   a: 10092
   b: 9021
   input: |
@@ -224,3 +223,10 @@ p15:
     <><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
     ^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
     v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^
+
+p16:
+  print_full_solutions: True
+  a: -1
+  b: -1
+  input: |
+    TBD
