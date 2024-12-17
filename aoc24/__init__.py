@@ -16,3 +16,5 @@ from .p13 import p13a, p13b
 from .p14 import p14a, p14b
 from .p15 import p15a, p15b
 from .p16 import p16a, p16b
+from .p17 import p17a, p17b
+from .p18 import p18a, p18b
