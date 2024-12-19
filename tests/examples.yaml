@@ -287,11 +287,19 @@ p18:
     2,0
 
 p19:
-  print_full_solutions: True
-  a: -1
-  b: -1
+  a: 6
+  b: 16
   input: |
-    TBD
+    r, wr, b, g, bwu, rb, gb, br
+
+    brwrr
+    bggr
+    gbbr
+    rrbgbr
+    ubwu
+    bwurrg
+    brgr
+    bbrgwb
 
 p20:
   print_full_solutions: True
@@ -299,3 +307,10 @@ p20:
   b: -1
   input: |
     TBD
+
+p21:
+  print_full_solutions: True
+  a: -1
+  b: -1
+  input: |
+    USE ABOVE FIRST
