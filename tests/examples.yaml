@@ -323,12 +323,23 @@ p20:
 
 p21:
   print_full_solutions: True
+  a: 126384
+  b: -1
+  input: |
+    029A
+    980A
+    179A
+    456A
+    379A
+
+p22:
+  print_full_solutions: True
   a: -1
   b: -1
   input: |
-    TBD
+    USE ABOVE FIRST
 
-p22:
+p23:
   print_full_solutions: True
   a: -1
   b: -1
