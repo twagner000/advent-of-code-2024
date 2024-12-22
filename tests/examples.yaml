@@ -333,13 +333,22 @@ p21:
     379A
 
 p22:
+  a: 37327623
+  b: 23
+  input: |
+    1
+    10
+    100
+    2024
+
+p23:
   print_full_solutions: True
   a: -1
   b: -1
   input: |
     USE ABOVE FIRST
 
-p23:
+p24:
   print_full_solutions: True
   a: -1
   b: -1
