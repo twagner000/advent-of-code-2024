@@ -7,7 +7,10 @@ import numpy as np
 
 
 def evolve_secret(secret: int, _: int = 0) -> int:
-    """Apply the secret number evolution formula from the puzzle statement."""
+    """Apply the secret number evolution formula from the puzzle statement.
+
+    The unused second argument is to match the signature of the reduce and accumulate functions.
+    """
 
     def mix_and_prune(a: int, b: int) -> int:
         return (a ^ b) % 16777216
