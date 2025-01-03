@@ -2,8 +2,6 @@ from functools import cache
 from io import TextIOBase
 from itertools import permutations, product
 
-from tqdm import tqdm
-
 
 @cache
 def keypad_to_dict(keypad: str) -> dict[str, tuple[int, int]]:
@@ -42,42 +40,39 @@ def get_valid_moves(keypad: str, c1: str, c2: str) -> set[str]:
     return moves2
 
 
-def enter_code(keypad: str, codes: set[str], start: str = "A") -> set[str]:
+@cache
+def get_pair_cost(keypad: str, c1: str, c2: str) -> int:
     """TBD."""
-    all_commands = set()
-    for code in codes:
-        commands = []
-        pos = start
-        for c in code:
-            commands.append(get_valid_moves(keypad, pos, c))
-            commands.append({"A"})
-            pos = c
-        all_commands |= {"".join(p) for p in product(*commands)}
-    min_len = min(len(p) for p in all_commands)
-    return {p for p in all_commands if len(p) == min_len}
+    return min(len(x) for x in get_valid_moves(keypad, c1, c2))
+
+
+def p21(codes: list[str], robots: int) -> int:
+    """TBD."""
+    keypads = ["789\n456\n123\n#0A"] + robots * ["#^A\n<v>"]
+    pair_costs = {}
+    for kpp in keypads[::-1]:
+        valid_moves = {
+            pair: get_valid_moves(kpp, *pair) for pair in product(kpp, kpp) if "#" not in pair and "\n" not in pair
+        }
+        pair_costs = {
+            pair: min(sum(pair_costs.get(p, 1) for p in zip(["A", *m], [*m, "A"], strict=False)) for m in moves)
+            for pair, moves in valid_moves.items()
+        }
+
+    return sum(
+        int(code[:3]) * sum(pair_costs[pair] for pair in zip(["A", *code], code, strict=False)) for code in codes
+    )
 
 
 def p21a(input_stream: TextIOBase) -> int:
     """TBD."""
-    door_codes = [{x.strip()} for x in input_stream]
-    commands = [enter_code("789\n456\n123\n#0A", code) for code in door_codes]
-    for _ in range(2):
-        commands = [enter_code("#^A\n<v>", code) for code in commands]
-    shortest = [min(len(final) for final in finals) for finals in commands]
-    return sum(int(next(iter(code))[:3]) * short for code, short in zip(door_codes, shortest, strict=False))
+    door_codes = [x.strip() for x in input_stream]
+    return p21(door_codes, 2)
 
 
 def p21b(input_stream: TextIOBase) -> int:
     """TBD."""
-    door_codes = [{x.strip()} for x in input_stream]
-    shortest = []
-    for code in door_codes:
-        if code == {"029A"}:
-            return -1
-        commands = enter_code("789\n456\n123\n#0A", code)
-        print(code)
-        for i in tqdm(range(25)):
-            commands = enter_code("#^A\n<v>", commands)
-            print(i, len(commands))
-        shortest.append(len(next(iter(commands))))
-    return sum(int(next(iter(code))[:3]) * short for code, short in zip(door_codes, shortest, strict=False))
+    door_codes = [x.strip() for x in input_stream]
+    if door_codes[0] == "029A":  # no test case provided for part b
+        return -1
+    return p21(door_codes, 25)
