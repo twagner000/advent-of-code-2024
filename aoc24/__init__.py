@@ -24,3 +24,4 @@ from .p21 import p21a, p21b
 from .p22 import p22a, p22b
 from .p23 import p23a, p23b
 from .p24 import p24a, p24b
+from .p25 import p25a, p25b
