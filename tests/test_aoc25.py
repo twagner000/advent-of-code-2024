@@ -6,7 +6,7 @@ import yaml
 
 import aoc25
 
-DATA_PATH = Path("data")
+DATA_PATH = Path("data") / "aoc25"
 
 with Path("tests/aoc25_examples.yaml").open() as f:
     EXAMPLES = yaml.safe_load(f)

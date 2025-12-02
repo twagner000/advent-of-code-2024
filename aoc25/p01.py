@@ -1,24 +1,32 @@
 from io import TextIOBase
 
-import pandas as pd
+
+def parse_instructions(input_stream: TextIOBase) -> list[int]:
+    """Parse instructions to list of integers.
+
+    Negative integer indicates left turn, positive indicates right.
+    """
+    return [int(x[1:]) * (-1 if x[0] == "L" else 1) for x in input_stream.read().strip().splitlines()]
 
 
 def p01a(input_stream: TextIOBase) -> int:
-    """Independently sort 2 columns of integers and sum the differences."""
-    puzzle_input = pd.read_csv(input_stream, sep=r"\s+", names=["left", "right"], dtype=int)
-    return (
-        puzzle_input.assign(
-            left=lambda df: df["left"].sort_values(ignore_index=True),
-            right=lambda df: df["right"].sort_values(ignore_index=True),
-            diff=lambda df: df["left"] - df["right"],
-        )["diff"]
-        .abs()
-        .sum()
-    )
+    """Find how many instructions land on 0."""
+    position = 50
+    n_zeros = 0
+    for instruction in parse_instructions(input_stream):
+        position = (position + instruction) % 100
+        if position == 0:
+            n_zeros += 1
+    return n_zeros
 
 
 def p01b(input_stream: TextIOBase) -> int:
-    """Multiply each integer in the left column by the number of times it appears in the right column, then sum."""
-    puzzle_input = pd.read_csv(input_stream, sep=r"\s+", names=["left", "right"], dtype=int)
-    counts = puzzle_input["right"].value_counts().to_dict()
-    return puzzle_input.assign(product=lambda df: df["left"].apply(lambda x: x * counts.get(x, 0)))["product"].sum()
+    """Find how many times we pass through 0."""
+    position = 50
+    n_zeros = 0
+    for instruction in parse_instructions(input_stream):
+        for i in range(-instruction, 0, -1) if instruction < 0 else range(1, instruction + 1):
+            if (position + i) % 100 == 0:
+                n_zeros += 1
+        position = (position + instruction) % 100
+    return n_zeros
