@@ -1,0 +1,11 @@
+p01:
+  print_full_solutions: True
+  a: 11
+  b: 31
+  input: |
+    3   4
+    4   3
+    2   5
+    1   3
+    3   9
+    3   3
