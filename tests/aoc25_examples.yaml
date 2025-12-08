@@ -92,7 +92,6 @@ p07:
     ...............
 
 p08:
-  print_full_solutions: True
   a: 40
   b: 25272
   input: |
@@ -116,3 +115,31 @@ p08:
     862,61,35
     984,92,344
     425,690,689
+
+p09:
+  print_full_solutions: True
+  a: -1
+  b: -1
+  input: |
+    tbd
+
+# p10:
+#   print_full_solutions: True
+#   a: -1
+#   b: -1
+#   input: |
+#     tbd
+
+# p11:
+#   print_full_solutions: True
+#   a: -1
+#   b: -1
+#   input: |
+#     tbd
+
+# p12:
+#   print_full_solutions: True
+#   a: -1
+#   b: -1
+#   input: |
+#     tbd
