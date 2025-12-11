@@ -130,7 +130,6 @@ p09:
     7,3
 
 p10:
-  print_full_solutions: True
   a: 7
   b: 33
   input: |
@@ -138,12 +137,35 @@ p10:
     [...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
     [.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}
 
-# p11:
-#   print_full_solutions: True
-#   a: -1
-#   b: -1
-#   input: |
-#     tbd
+p11:
+  print_full_solutions: True
+  a: 5
+  b: 2
+  input_a: |
+    aaa: you hhh
+    you: bbb ccc
+    bbb: ddd eee
+    ccc: ddd eee fff
+    ddd: ggg
+    eee: out
+    fff: out
+    ggg: out
+    hhh: ccc fff iii
+    iii: out
+  input_b: |
+    svr: aaa bbb
+    aaa: fft
+    fft: ccc
+    bbb: tty
+    tty: ccc
+    ccc: ddd eee
+    ddd: hub
+    hub: fff
+    eee: dac
+    dac: fff
+    fff: ggg hhh
+    ggg: out
+    hhh: out
 
 # p12:
 #   print_full_solutions: True

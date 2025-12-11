@@ -16,7 +16,8 @@ EXAMPLE_KEYS = [(k, k2) for k, v in EXAMPLES.items() for k2 in v if len(k2) == 1
 @pytest.mark.parametrize(("puzzle", "part"), EXAMPLE_KEYS)
 def test_aoc25(puzzle: str, part: str):
     puzzle_func = getattr(aoc25, puzzle + part)
-    with StringIO(EXAMPLES[puzzle]["input"]) as f:
+    puzzle_input = EXAMPLES[puzzle].get(f"input_{part}") or EXAMPLES[puzzle]["input"]
+    with StringIO(puzzle_input) as f:
         assert puzzle_func(f) == EXAMPLES[puzzle][part]
     if EXAMPLES[puzzle].get("print_full_solutions"):
         puzzle_input_path = DATA_PATH / f"{puzzle}.txt"

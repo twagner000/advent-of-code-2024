@@ -44,6 +44,7 @@ ignore = [
     "TD",  # flexible TODO
     "RET503",  # implicit return None ok
     "D100",  # no docstring required for public modules
+    "FBT",  # boolean trap is ok
 ]
 
 [tool.ruff.lint.per-file-ignores]
