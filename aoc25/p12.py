@@ -90,7 +90,7 @@ def solve_mip(region: np.ndarray, shapes_arr: np.ndarray, shape_slices: list[sli
 
     Returns 1 if feasible, 0 if infeasible.
     """
-    solver = pywraplp.Solver.CreateSolver("GLOP")
+    solver = pywraplp.Solver.CreateSolver("GLOP")  # GLOP is an LP solver that actually ignores the boolean constraints
     # optionally solver.EnableOutput()
 
     # x_ijk = 1 if x=i, y=j is the upper left corner of shape k, else 0

@@ -167,9 +167,8 @@ p11:
     hhh: out
 
 p12:
-  print_full_solutions: True
+  # print_full_solutions: True
   a: 2
-  b: -1
   input: |
     0:
     ###
